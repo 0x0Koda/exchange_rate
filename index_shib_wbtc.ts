@@ -29,9 +29,9 @@ const provider = ethers.getDefaultProvider(
   const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
   const SAND_ADDRESS = "0x3845badAde8e6dFF049820680d1F14bD3903a5d0";
 
-  let path = [SAND_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
+  let path = [SHIB_ADDRESS, WETH_ADDRESS, USDC_ADDRESS];
   //const path = [USDC_ADDRESS, WETH_ADDRESS];
-  path = path.reverse();
+  //path = path.reverse();
 
   const uniswap = new ethers.Contract(
     UNISWAPV2_ROUTER02_ADDRESS,
@@ -39,8 +39,8 @@ const provider = ethers.getDefaultProvider(
     provider
   );
 
-  const decimalsIn = 6;
-  const decimalsOut = 18;
+  const decimalsIn = 18;
+  const decimalsOut = 6;
 
   let decimalIterator = decimalsIn - 4;
   //let decimalIterator = decimalsIn;
@@ -53,7 +53,7 @@ const provider = ethers.getDefaultProvider(
     if (amountOut[amountOut.length - 1] > 10000) {
       break;
     }
-    console.log("loop");
+    console.log("searching for precision");
     decimalIterator = decimalIterator + 4;
     amountIn = ethers.utils.parseUnits("1", decimalIterator);
     amountOut = await uniswap.getAmountsOut(amountIn, path);
@@ -76,5 +76,8 @@ const provider = ethers.getDefaultProvider(
   const destinationTokenBN = FixedNumber.from(
     ethers.utils.formatUnits(amountOut[amountOut.length - 1], decimalsOut)
   );
-  console.log("div: ", destinationTokenBN.divUnsafe(sourceTokenBN).toString());
+  console.log(
+    "exchange rate: ",
+    destinationTokenBN.divUnsafe(sourceTokenBN).toString()
+  );
 })();
